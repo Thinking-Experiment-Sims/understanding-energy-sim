@@ -175,15 +175,15 @@ function updateUI() {
     const v = Math.sqrt((2 * ke) / state.M).toFixed(1);
     
     // Stats
-    elements.statPe.innerText = pe + " J";
-    elements.statKe.innerText = ke + " J";
-    elements.statTot.innerText = state.totalE + " J";
-    elements.statH.innerText = h + " m";
-    elements.statV.innerText = v + " m/s";
+    if (elements.statPe) elements.statPe.innerText = pe + " J";
+    if (elements.statKe) elements.statKe.innerText = ke + " J";
+    if (elements.statTot) elements.statTot.innerText = state.totalE + " J";
+    if (elements.statH) elements.statH.innerText = h + " m";
+    if (elements.statV) elements.statV.innerText = v + " m/s";
     
     const posLabel = state.posPct > 80 ? 'Top' : state.posPct > 35 ? 'Middle' : 'Bottom';
-    elements.statPos.innerText = posLabel;
-    elements.posOut.innerText = posLabel;
+    if (elements.statPos) elements.statPos.innerText = posLabel;
+    if (elements.posOut) elements.posOut.innerText = posLabel;
     
 
     // Notes
