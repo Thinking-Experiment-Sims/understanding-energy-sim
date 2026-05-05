@@ -3,7 +3,8 @@ const state = {
     totalE: 10,
     posPct: 100, // 100% = top, 0% = bottom
     M: 1,
-    G: 10
+    G: 10,
+    workDone: 0
 };
 
 let elements = {};
@@ -20,9 +21,9 @@ function initElements() {
         statV: document.getElementById('stat-v'),
         statPos: document.getElementById('stat-pos'),
         posSlider: document.getElementById('pos-slider'),
-        energySlider: document.getElementById('energy-slider'),
+        
         posOut: document.getElementById('pos-out'),
-        energyOut: document.getElementById('energy-out'),
+        workTotalDisplay: document.getElementById('work-total-display'),
         rampCanvas: document.getElementById('ramp-canvas'),
         partTitle: document.getElementById('part-title'),
         partDesc: document.getElementById('part-desc'),
@@ -32,7 +33,9 @@ function initElements() {
         btnReset: document.getElementById('btn-reset'),
         btnNext: document.getElementById('btn-next'),
         formulaBar: document.getElementById('formula-bar'),
-        energyControl: document.getElementById('energy-control')
+        workControl: document.getElementById('work-control'),
+        btnAddWork: document.getElementById('btn-add-work'),
+        btnRemWork: document.getElementById('btn-rem-work')
     };
 }
 
@@ -81,7 +84,7 @@ const parts = {
         enableWork: true,
         showPhysics: false,
         tasks: [
-            "Positive Work: Use the 'Work Done' slider to add notes (Energy In).",
+            "Positive Work: Use the '+ Add' and '- Remove' buttons to perform Work (Energy In).",
             "Negative Work: Slide left to remove notes (Energy Out).",
             "Notice: Does the total energy change? This is Work in action."
         ],
@@ -100,7 +103,7 @@ const parts = {
         showPhysics: true,
         tasks: [
             "Action: Move the ball to the bottom (Energy Transfer).",
-            "Action: Add 5 notes using the Work slider (External Work).",
+            "Action: Add 5 notes using the '+ Add' button (External Work).",
             "Predict: Calculate the new velocity after both changes."
         ],
         hints: {
@@ -120,11 +123,20 @@ function init() {
         state.posPct = parseInt(e.target.value);
         updateUI();
     });
-    elements.energySlider.addEventListener('input', (e) => {
-        state.totalE = parseInt(e.target.value);
+    
+    elements.btnReset.addEventListener('click', () => renderPart(state.part));
+    
+    elements.btnAddWork.addEventListener('click', () => {
+        state.totalE = Math.min(15, state.totalE + 1);
+        state.workDone++;
         updateUI();
     });
-    elements.btnReset.addEventListener('click', () => renderPart(state.part));
+    elements.btnRemWork.addEventListener('click', () => {
+        state.totalE = Math.max(1, state.totalE - 1);
+        state.workDone--;
+        updateUI();
+    });
+
     elements.btnNext.addEventListener('click', () => {
         if (state.part < 4) renderPart(state.part + 1);
     });
@@ -139,18 +151,19 @@ function renderPart(num) {
     
     state.totalE = config.totalE;
     state.posPct = config.posPct;
+    state.workDone = 0;
     
     elements.partTitle.innerText = config.title;
     elements.partDesc.innerText = config.desc;
     elements.taskList.innerHTML = config.tasks.map(t => `<li>${t}</li>`).join('');
     
     // Visibility
-    elements.energyControl.style.opacity = config.enableWork ? '1' : '0.4';
-    elements.energyControl.style.pointerEvents = config.enableWork ? 'all' : 'none';
+    elements.workControl.style.opacity = config.enableWork ? '1' : '0.4';
+    elements.workControl.style.pointerEvents = config.enableWork ? 'all' : 'none';
     elements.formulaBar.style.display = config.showPhysics ? 'flex' : 'none';
     
     elements.posSlider.value = state.posPct;
-    elements.energySlider.value = state.totalE;
+    
 
     updateUI();
 }
@@ -197,6 +210,13 @@ function updateUI() {
     // Annotation
     const hints = config.hints;
     elements.annotation.innerText = state.posPct > 80 ? hints.top : state.posPct > 35 ? hints.middle : hints.bottom;
+
+    
+    if (elements.workTotalDisplay) {
+        const sign = state.workDone > 0 ? '+' : '';
+        elements.workTotalDisplay.innerText = sign + state.workDone + ' J Work';
+        elements.workTotalDisplay.className = 'work-badge ' + (state.workDone > 0 ? 'pos' : (state.workDone < 0 ? 'neg' : 'none'));
+    }
 
     drawRamp();
 }

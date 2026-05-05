@@ -378,3 +378,13 @@ input[type=range] {
 }
 
 .note:nth-child(even) { transform: rotate(2deg); }
+
+.work-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.work-buttons .btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}

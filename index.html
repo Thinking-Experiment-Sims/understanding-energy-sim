@@ -98,6 +98,7 @@
 
                 <!-- Right Panel: Guide & Controls -->
                 <div class="guide-column">
+                    
                     <div class="panel guide-panel">
                         <h2 id="part-title">Part 1: The Bathtub</h2>
                         <p id="part-desc" class="part-description">Total energy is fixed. You can only transfer energy between PE and KE.</p>
@@ -115,12 +116,18 @@
                                 <input type="range" min="0" max="100" value="100" id="pos-slider" step="1">
                             </div>
 
-                            <div class="control-group" id="energy-control">
+                            <div class="control-group" id="work-control">
                                 <div class="control-header">
-                                    <label>Work Done (Total Energy)</label>
-                                    <span class="control-val" id="energy-out">10 J</span>
+                                    <label>External Work</label>
+                                    <span id="work-total-display" class="work-badge none">0 J</span>
                                 </div>
-                                <input type="range" min="1" max="15" value="10" id="energy-slider" step="1">
+                                <div class="button-actions work-buttons">
+                                    <button id="btn-add-work" class="btn btn-secondary">+ Add 1J (Pos Work)</button>
+                                    <button id="btn-rem-work" class="btn btn-secondary">- Remove 1J (Neg Work)</button>
+                                </div>
+                                <div class="sub-label" style="font-size:0.75rem; color:var(--color-text-secondary); margin-top:0.25rem;">
+                                    Work changes the total energy of the system.
+                                </div>
                             </div>
 
                             <div class="button-actions">
@@ -128,6 +135,9 @@
                                 <button id="btn-next" class="btn btn-primary">Next Part</button>
                             </div>
                         </div>
+                    </div>
+
+
                     </div>
 
                     <div class="annotation-box" id="annotation">
