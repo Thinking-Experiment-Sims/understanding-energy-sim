@@ -1,0 +1,262 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.wrap{padding:1rem 0}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:8px;flex-wrap:wrap}
+.top-bar h2{font-size:15px;font-weight:500;color:var(--color-text-secondary)}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.panel-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.notes-area{display:flex;gap:4px;margin-bottom:8px;min-height:36px;flex-wrap:wrap;align-items:center}
+.note{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;transition:all .35s cubic-bezier(.4,0,.2,1)}
+.note.pe{background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC}
+.note.ke{background:#E1F5EE;color:#085041;border:1px solid #5DCAA5}
+.note.work-in{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
+.note.work-out{background:#FCEBEB;color:#791F1F;border:1px solid #F09595}
+.side-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.divider{width:100%;height:1px;background:var(--color-border-tertiary);margin:8px 0}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:6px 8px;text-align:center}
+.stat-label{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.stat-val{font-size:14px;font-weight:500}
+.stat-val.pe-color{color:#534AB7}
+.stat-val.ke-color{color:#0F6E56}
+.stat-val.tot-color{color:var(--color-text-primary)}
+canvas{width:100%;display:block;border-radius:6px}
+.controls{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.ctrl-row{display:flex;align-items:center;gap:10px}
+.ctrl-label{font-size:13px;color:var(--color-text-secondary);width:90px;flex-shrink:0}
+.ctrl-row input[type=range]{flex:1}
+.ctrl-val{font-size:13px;font-weight:500;min-width:44px;text-align:right}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+button{font-size:12px;padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+button:hover{background:var(--color-background-secondary)}
+button.active{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+.work-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500}
+.work-badge.pos{background:#FAEEDA;color:#633806}
+.work-badge.neg{background:#FCEBEB;color:#791F1F}
+.work-badge.none{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.formula-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.formula{font-size:11px;background:var(--color-background-secondary);border-radius:4px;padding:3px 8px;color:var(--color-text-secondary);font-family:var(--font-mono)}
+.annotation{font-size:12px;color:var(--color-text-secondary);margin-top:8px;line-height:1.5}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Interactive energy conservation: post-it note model linked to a ramp simulation</h2>
+
+<div class="top-bar">
+  <div>
+    <div style="font-size:15px;font-weight:500">Conservation of energy: two models, one reality</div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Move the ball on the ramp — watch the post-it notes respond in real time</div>
+  </div>
+  <div id="work-badge" class="work-badge none">no work</div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">post-it model</div>
+    <div class="side-label">PE (potential energy)</div>
+    <div class="notes-area" id="pe-notes"></div>
+    <div class="side-label" style="margin-top:6px">KE (kinetic energy)</div>
+    <div class="notes-area" id="ke-notes"></div>
+    <div class="divider"></div>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-label">PE</div><div class="stat-val pe-color" id="stat-pe">0 J</div></div>
+      <div class="stat"><div class="stat-label">KE</div><div class="stat-val ke-color" id="stat-ke">0 J</div></div>
+      <div class="stat"><div class="stat-label">Total</div><div class="stat-val tot-color" id="stat-tot">0 J</div></div>
+    </div>
+    <div class="formula-row">
+      <span class="formula">PE = mgh</span>
+      <span class="formula">KE = ½mv²</span>
+      <span class="formula">m=1kg, g=10</span>
+    </div>
+    <div class="annotation" id="annotation">Drag the ball up the ramp to add potential energy.</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">ramp model</div>
+    <canvas id="ramp-canvas" height="190"></canvas>
+    <div class="stat-row" style="margin-top:8px">
+      <div class="stat"><div class="stat-label">height</div><div class="stat-val pe-color" id="stat-h">0.0 m</div></div>
+      <div class="stat"><div class="stat-label">speed</div><div class="stat-val ke-color" id="stat-v">0.0 m/s</div></div>
+      <div class="stat"><div class="stat-label">position</div><div class="stat-val" id="stat-pos">bottom</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="ctrl-row">
+    <span class="ctrl-label">ball position</span>
+    <input type="range" min="0" max="100" value="100" id="pos-slider" step="1">
+    <span class="ctrl-val" id="pos-out">top</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">total energy</span>
+    <input type="range" min="4" max="12" value="10" id="energy-slider" step="1">
+    <span class="ctrl-val" id="energy-out">10 J</span>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary)">Changing total energy = doing work on the system (adding or removing notes from outside)</div>
+  <div class="btn-row">
+    <button id="btn-top" class="active">ball at top</button>
+    <button id="btn-mid">ball halfway</button>
+    <button id="btn-bot">ball at bottom</button>
+    <button id="btn-ask" onclick="sendPrompt('Can you explain what happens to height and speed as the ball rolls down the ramp? Connect it to the post-it model.')">ask Claude ↗</button>
+  </div>
+</div>
+</div>
+
+<script>
+var MAX_NOTES = 12;
+var totalE = 10;
+var posPct = 100;
+var M = 1, G = 10;
+
+function getPE(pct){ return Math.round(totalE * pct / 100); }
+function getKE(pct){ return totalE - getPE(pct); }
+function getH(peJ){ return (peJ / (M*G)).toFixed(1); }
+function getV(keJ){ return Math.sqrt(2*keJ/M).toFixed(1); }
+
+function renderNotes(){
+  var pe = getPE(posPct), ke = getKE(posPct);
+  var peEl = document.getElementById('pe-notes');
+  var keEl = document.getElementById('ke-notes');
+  peEl.innerHTML = ''; keEl.innerHTML = '';
+  for(var i=0;i<pe;i++){
+    var n=document.createElement('div');
+    n.className='note pe'; n.textContent='J'; peEl.appendChild(n);
+  }
+  for(var i=0;i<ke;i++){
+    var n=document.createElement('div');
+    n.className='note ke'; n.textContent='J'; keEl.appendChild(n);
+  }
+  document.getElementById('stat-pe').textContent = pe + ' J';
+  document.getElementById('stat-ke').textContent = ke + ' J';
+  document.getElementById('stat-tot').textContent = totalE + ' J';
+  document.getElementById('stat-h').textContent = getH(pe) + ' m';
+  document.getElementById('stat-v').textContent = getV(ke) + ' m/s';
+  var posLabel = posPct > 80 ? 'top' : posPct > 35 ? 'middle' : 'bottom';
+  document.getElementById('stat-pos').textContent = posLabel;
+  updateAnnotation(pe, ke, posPct);
+}
+
+function updateAnnotation(pe, ke, pct){
+  var ann = document.getElementById('annotation');
+  if(pct > 85){ ann.textContent = 'All energy is PE. The ball is at maximum height and momentarily still — v = 0 m/s.'; }
+  else if(pct < 15){ ann.textContent = 'All energy is KE. The ball is at the bottom, moving at maximum speed. PE = 0.'; }
+  else { ann.textContent = 'Energy is split: ' + pe + ' J in PE (height) and ' + ke + ' J in KE (speed). Total stays at ' + totalE + ' J.'; }
+}
+
+function drawRamp(){
+  var canvas = document.getElementById('ramp-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.offsetWidth * window.devicePixelRatio || 300;
+  var H = 190 * window.devicePixelRatio;
+  canvas.width = W; canvas.height = H;
+  var s = window.devicePixelRatio || 1;
+  ctx.scale(s, s);
+  var cw = canvas.offsetWidth || 300, ch = 190;
+
+  ctx.clearRect(0,0,cw,ch);
+
+  var rampX0=30, rampY0=ch-30, rampX1=cw-20, rampY1=30;
+
+  var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var groundColor = isDark ? '#444441' : '#D3D1C7';
+  var rampColor   = isDark ? '#888780' : '#5F5E5A';
+  var peColor     = isDark ? '#AFA9EC' : '#534AB7';
+  var keColor     = isDark ? '#5DCAA5' : '#0F6E56';
+  var ballColor   = isDark ? '#FAC775' : '#BA7517';
+  var textColor   = isDark ? '#D3D1C7' : '#5F5E5A';
+  var arrowColor  = isDark ? '#CECBF6' : '#3C3489';
+
+  ctx.strokeStyle = groundColor; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(rampX0-5, rampY0); ctx.lineTo(cw, rampY0); ctx.stroke();
+
+  ctx.strokeStyle = rampColor; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(rampX0, rampY0); ctx.lineTo(rampX1, rampY1); ctx.stroke();
+
+  var t = 1 - posPct/100;
+  var bx = rampX0 + (rampX1-rampX0)*t;
+  var by = rampY0 + (rampY1-rampY0)*t;
+  var r = 10;
+
+  var pe = getPE(posPct), ke = getKE(posPct);
+
+  if(pe>0){
+    ctx.strokeStyle = peColor; ctx.lineWidth = 1.5; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, rampY0); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = peColor; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('h=' + getH(pe)+'m', bx+5, (by+rampY0)/2+4);
+  }
+
+  if(ke>0 && posPct < 90){
+    ctx.strokeStyle = keColor; ctx.lineWidth = 2.5;
+    var dx = rampX1-rampX0, dy = rampY1-rampY0;
+    var len = Math.sqrt(dx*dx+dy*dy);
+    var ux = dx/len, uy = dy/len;
+    var arrowLen = Math.min(22, ke*4);
+    ctx.beginPath();
+    ctx.moveTo(bx + ux*r, by + uy*r);
+    ctx.lineTo(bx + ux*(r+arrowLen), by + uy*(r+arrowLen));
+    ctx.stroke();
+    var ax = bx + ux*(r+arrowLen), ay = by + uy*(r+arrowLen);
+    ctx.fillStyle = keColor;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - ux*7 + uy*4, ay - uy*7 - ux*4);
+    ctx.lineTo(ax - ux*7 - uy*4, ay - uy*7 + ux*4);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = keColor; ctx.font = '11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText('v=' + getV(ke)+'m/s', bx - 6, by - 4);
+  }
+
+  ctx.beginPath();
+  ctx.arc(bx, by, r, 0, 2*Math.PI);
+  ctx.fillStyle = ballColor; ctx.fill();
+  ctx.strokeStyle = isDark ? '#E6C050' : '#854F0B'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  ctx.fillStyle = textColor; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(totalE + ' J total', cw/2, ch-8);
+}
+
+function update(){
+  renderNotes();
+  drawRamp();
+}
+
+document.getElementById('pos-slider').addEventListener('input', function(){
+  posPct = +this.value;
+  var label = posPct > 80 ? 'top' : posPct > 35 ? 'middle' : 'bottom';
+  document.getElementById('pos-out').textContent = label;
+  update();
+});
+
+document.getElementById('energy-slider').addEventListener('input', function(){
+  totalE = +this.value;
+  document.getElementById('energy-out').textContent = totalE + ' J';
+  var prevTotal = 10;
+  var badge = document.getElementById('work-badge');
+  if(totalE > 10){ badge.className='work-badge pos'; badge.textContent='+work done'; }
+  else if(totalE < 10){ badge.className='work-badge neg'; badge.textContent='-work done'; }
+  else { badge.className='work-badge none'; badge.textContent='no work'; }
+  update();
+});
+
+function setPos(pct){
+  posPct = pct;
+  document.getElementById('pos-slider').value = pct;
+  var label = pct > 80 ? 'top' : pct > 35 ? 'middle' : 'bottom';
+  document.getElementById('pos-out').textContent = label;
+  document.querySelectorAll('.btn-row button:not(#btn-ask)').forEach(function(b){ b.classList.remove('active'); });
+  update();
+}
+
+document.getElementById('btn-top').addEventListener('click', function(){ setPos(100); this.classList.add('active'); });
+document.getElementById('btn-mid').addEventListener('click', function(){ setPos(50); this.classList.add('active'); });
+document.getElementById('btn-bot').addEventListener('click', function(){ setPos(0); this.classList.add('active'); });
+
+window.addEventListener('resize', function(){ drawRamp(); });
+update();
+</script>
