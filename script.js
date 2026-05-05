@@ -184,7 +184,7 @@ function updateUI() {
     const posLabel = state.posPct > 80 ? 'Top' : state.posPct > 35 ? 'Middle' : 'Bottom';
     elements.statPos.innerText = posLabel;
     elements.posOut.innerText = posLabel;
-    elements.energyOut.innerText = state.totalE + " J";
+    
 
     // Notes
     renderNotes(pe, ke);
