@@ -4,152 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Understanding Energy - The Thinking Experiment</title>
-    <meta name="description" content="Interactive energy conservation and work simulation for 11th grade physics.">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="light-mode">
-    <div class="app-shell">
-        <header class="app-header">
-            <div class="header-main">
+<body data-theme="light">
+    <div class="bg-grid"></div>
+    
+    <div class="shell">
+        <!-- ===== HERO ===== -->
+        <header class="hero">
+            <div>
                 <p class="kicker">The Thinking Experiment</p>
                 <h1>Understanding Energy</h1>
                 <p class="subtitle">Conservation of Energy & Work-Energy Theorem</p>
             </div>
             <div class="part-nav">
-                <label for="part-selector">Current Phase:</label>
-                <select id="part-selector">
-                    <option value="1">Part 1: The Bathtub</option>
-                    <option value="2">Part 2: Real Values</option>
-                    <option value="3">Part 3: Work</option>
-                    <option value="4">Part 4: Together</option>
-                </select>
+                <label>
+                    PHASE
+                    <select id="part-selector">
+                        <option value="1">Part 1: The Bathtub</option>
+                        <option value="2">Part 2: Real Values</option>
+                        <option value="3">Part 3: Work</option>
+                        <option value="4">Part 4: Together</option>
+                    </select>
+                </label>
             </div>
         </header>
 
-        <main class="main-content">
-            <div class="simulation-grid">
-                <!-- Left Panel: Models -->
-                <div class="models-column">
-                    <div class="panel">
-                        <div class="panel-header">
-                            <span class="panel-title">Post-It Note Model</span>
-                            <span id="work-badge" class="work-badge none">no work</span>
-                        </div>
-                        
-                        <div class="model-section">
-                            <div class="side-label">PE (Potential Energy)</div>
-                            <div class="notes-area" id="pe-notes"></div>
-                        </div>
-
-                        <div class="model-section">
-                            <div class="side-label">KE (Kinetic Energy)</div>
-                            <div class="notes-area" id="ke-notes"></div>
-                        </div>
-
-                        <div class="stats-grid">
-                            <div class="stat-card pe">
-                                <div class="stat-label">PE</div>
-                                <div class="stat-value" id="stat-pe">0 J</div>
-                            </div>
-                            <div class="stat-card ke">
-                                <div class="stat-label">KE</div>
-                                <div class="stat-value" id="stat-ke">0 J</div>
-                            </div>
-                            <div class="stat-card total">
-                                <div class="stat-label">Total</div>
-                                <div class="stat-value" id="stat-tot">0 J</div>
-                            </div>
-                        </div>
-
-                        <div class="formula-bar" id="formula-bar">
-                            <span class="formula-chip">PE = mgh</span>
-                            <span class="formula-chip">KE = ½mv²</span>
-                            <span class="formula-chip">m = 1kg, g = 10m/s²</span>
-                        </div>
+        <main class="app-layout">
+            <!-- Left: Models -->
+            <div class="models-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Post-It Note Model</span>
+                        <span id="work-badge" class="work-badge none">Closed System</span>
                     </div>
-
-                    <div class="panel">
-                        <div class="panel-header">
-                            <span class="panel-title">Physical Ramp Model</span>
-                        </div>
-                        <div class="canvas-container">
-                            <canvas id="ramp-canvas"></canvas>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-card height">
-                                <div class="stat-label">Height (h)</div>
-                                <div class="stat-value" id="stat-h">0.0 m</div>
-                            </div>
-                            <div class="stat-card speed">
-                                <div class="stat-label">Speed (v)</div>
-                                <div class="stat-value" id="stat-v">0.0 m/s</div>
-                            </div>
-                            <div class="stat-card position">
-                                <div class="stat-label">Position</div>
-                                <div class="stat-value" id="stat-pos">Top</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Panel: Guide & Controls -->
-                <div class="guide-column">
                     
-                    <div class="panel guide-panel">
-                        <h2 id="part-title">Part 1: The Bathtub</h2>
-                        <p id="part-desc" class="part-description">Total energy is fixed. You can only transfer energy between PE and KE.</p>
-                        
-                        <div class="task-box">
-                            <ul id="task-list"></ul>
+                    <div class="model-section">
+                        <div class="side-label">Potential Energy (PE)</div>
+                        <div class="notes-area" id="pe-notes"></div>
+                    </div>
+
+                    <div class="model-section">
+                        <div class="side-label">Kinetic Energy (KE)</div>
+                        <div class="notes-area" id="ke-notes"></div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">PE</div>
+                            <div id="stat-pe" class="stat-value">0 J</div>
                         </div>
-
-                        <div class="controls-section">
-                            <div class="control-group" id="pos-control">
-                                <div class="control-header">
-                                    <label>Ball Position</label>
-                                    <span class="control-val" id="pos-out">Top</span>
-                                </div>
-                                <input type="range" min="0" max="100" value="100" id="pos-slider" step="1">
-                            </div>
-
-                            <div class="control-group" id="work-control">
-                                <div class="control-header">
-                                    <label>External Work</label>
-                                    <span id="work-total-display" class="work-badge none">0 J</span>
-                                </div>
-                                <div class="button-actions work-buttons">
-                                    <button id="btn-add-work" class="btn btn-secondary">+ Add 1J (Pos Work)</button>
-                                    <button id="btn-rem-work" class="btn btn-secondary">- Remove 1J (Neg Work)</button>
-                                </div>
-                                <div class="sub-label" style="font-size:0.75rem; color:var(--color-text-secondary); margin-top:0.25rem;">
-                                    Work changes the total energy of the system.
-                                </div>
-                            </div>
-
-                            <div class="button-actions">
-                                <button id="btn-reset" class="btn btn-secondary">Reset Scenario</button>
-                                <button id="btn-next" class="btn btn-primary">Next Part</button>
-                            </div>
+                        <div class="stat-card">
+                            <div class="stat-label">KE</div>
+                            <div id="stat-ke" class="stat-value">0 J</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total</div>
+                            <div id="stat-tot" class="stat-value">0 J</div>
                         </div>
                     </div>
+                </section>
 
+                <section class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">Physical Ramp Model</span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="ramp-canvas"></canvas>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Height (h)</div>
+                            <div id="stat-h" class="stat-value">0.0 m</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Speed (v)</div>
+                            <div id="stat-v" class="stat-value">0.0 m/s</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Position</div>
+                            <div id="stat-pos" class="stat-value">Top</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
+            <!-- Right: Guide & Controls -->
+            <div class="guide-column">
+                <section class="panel guide-panel">
+                    <h2 id="part-title">Part 1: The Bathtub</h2>
+                    <p id="part-desc" class="part-description">Energy transfers between states but the total is conserved.</p>
+                    
+                    <div class="task-box">
+                        <ul id="task-list"></ul>
                     </div>
 
-                    <div class="annotation-box" id="annotation">
-                        Select a part to begin the investigation.
+                    <div class="controls-section">
+                        <div class="control-group">
+                            <div class="panel-header" style="border:0; margin-bottom:0; padding:0;">
+                                <label>BALL POSITION</label>
+                                <span id="pos-out" style="font-weight:700; color:var(--gold-500);">Top</span>
+                            </div>
+                            <input type="range" id="pos-slider" min="0" max="100" value="100">
+                        </div>
+
+                        <div class="control-group" id="work-control">
+                            <div class="panel-header" style="border:0; margin-bottom:0; padding:0;">
+                                <label>EXTERNAL WORK</label>
+                                <span id="work-total-display" class="work-badge none">0 J</span>
+                            </div>
+                            <div class="button-row">
+                                <button id="btn-add-work" class="btn">+ Add 1J</button>
+                                <button id="btn-rem-work" class="btn ghost">- Rem 1J</button>
+                            </div>
+                        </div>
+
+                        <div class="button-row" style="margin-top:1.5rem;">
+                            <button id="btn-reset" class="ghost" style="flex:1;">Reset</button>
+                            <button id="btn-next" style="flex:2;">Next Phase</button>
+                        </div>
                     </div>
+
+                    <div id="annotation" class="annotation-box"></div>
+                </section>
+
+                <div id="formula-bar" class="panel" style="margin-top:1rem; padding:0.8rem; display:none; flex-wrap:wrap; gap:0.5rem; justify-content:center;">
+                    <span class="work-badge" style="background:#f1f3f5; color:var(--text-300);">PE = mgh</span>
+                    <span class="work-badge" style="background:#f1f3f5; color:var(--text-300);">KE = ½mv²</span>
                 </div>
             </div>
         </main>
-
-        <footer class="app-footer">
-            <p>Built for 11th Grade Physics | The Thinking Experiment</p>
-        </footer>
     </div>
 
     <script src="script.js"></script>
