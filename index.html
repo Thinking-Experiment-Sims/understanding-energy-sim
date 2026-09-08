@@ -13,19 +13,22 @@
     <div class="shell">
         <!-- ===== HERO ===== -->
         <header class="hero">
-            <div>
-                <p class="kicker">The Thinking Experiment</p>
+            <div class="hero-top-left">
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.35rem;">
+                    <a href="https://thinking-experiment-sims.github.io/interactive-physics/" class="brand-badge" title="Return to Physics Simulations Hub">← The Thinking Experiment</a>
+                    <span class="lab-badge">📐 Physics Lab Activity</span>
+                </div>
                 <h1>Understanding Energy</h1>
-                <p class="subtitle">Conservation of Energy & Work-Energy Theorem</p>
+                <p class="subtitle">Conservation of Mechanical Energy & the Work-Energy Theorem</p>
             </div>
             <div class="part-nav">
                 <label>
                     PHASE
                     <select id="part-selector">
-                        <option value="1">Part 1: The Bathtub</option>
+                        <option value="1">Part 1: Energy Transfer</option>
                         <option value="2">Part 2: Real Values</option>
-                        <option value="3">Part 3: Work</option>
-                        <option value="4">Part 4: Together</option>
+                        <option value="3">Part 3: External Work</option>
+                        <option value="4">Part 4: Putting It All Together</option>
                     </select>
                 </label>
             </div>
@@ -93,8 +96,8 @@
             <!-- Right: Guide & Controls -->
             <div class="guide-column">
                 <section class="panel guide-panel">
-                    <h2 id="part-title">Part 1: The Bathtub</h2>
-                    <p id="part-desc" class="part-description">Energy transfers between states but the total is conserved.</p>
+                    <h2 id="part-title">Part 1: Energy Transfer</h2>
+                    <p id="part-desc" class="part-description">Total energy is conserved in a closed system; energy transfers between PE and KE.</p>
                     
                     <div class="task-box">
                         <ul id="task-list"></ul>
@@ -115,14 +118,14 @@
                                 <span id="work-total-display" class="work-badge none">0 J</span>
                             </div>
                             <div class="button-row">
-                                <button id="btn-add-work" class="btn">+ Add 1J</button>
-                                <button id="btn-rem-work" class="btn ghost">- Rem 1J</button>
+                                <button id="btn-add-work" class="btn btn-primary">+ Add 1J</button>
+                                <button id="btn-rem-work" class="btn btn-secondary">- Rem 1J</button>
                             </div>
                         </div>
 
                         <div class="button-row" style="margin-top:1.5rem;">
-                            <button id="btn-reset" class="ghost" style="flex:1;">Reset</button>
-                            <button id="btn-next" style="flex:2;">Next Phase</button>
+                            <button id="btn-reset" class="btn btn-secondary" style="flex:1;">Reset</button>
+                            <button id="btn-next" class="btn btn-primary" style="flex:2;">Next Phase</button>
                         </div>
                     </div>
 

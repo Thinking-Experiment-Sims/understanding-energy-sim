@@ -1,6 +1,6 @@
 # Understanding Energy: Conservation & Work
 
-Interactive "Energy Token" activity for 11th-grade physics. This simulation models the Bathtub analogy for energy conservation and the Work-Energy Theorem.
+Interactive "Energy Token" activity for 11th-grade physics. This simulation models the conservation of mechanical energy, state transfers between potential and kinetic energy, and the Work-Energy Theorem.
 
 ## Features
 - **Interactive Post-It Notes**: Move 1J tokens between PE and KE.

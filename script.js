@@ -41,21 +41,21 @@ function initElements() {
 
 const parts = {
     1: {
-        title: "Part 1: The Bathtub",
-        desc: "Total Energy is Conserved. You can only transfer energy between PE and KE. The total stays at 10 Joules.",
+        title: "Part 1: Energy Transfer",
+        desc: "Total Mechanical Energy is conserved in a closed system. Transfer energy between PE and KE while the total stays constant at 10 Joules.",
         totalE: 10,
         posPct: 100,
         enableWork: false,
         showPhysics: false,
         tasks: [
-            "Predict: If you move the ball halfway down, what happens to the note counts?",
-            "Click: Click a Purple note to transfer energy to KE.",
-            "Click: Click a Gold note to transfer energy back to PE."
+            "Predict: If you move the ball halfway down, what happens to the energy distribution?",
+            "Click: Click a Teal (PE) note to transfer energy to KE.",
+            "Click: Click an Amber (KE) note to transfer energy back to PE."
         ],
         hints: {
-            top: "All energy is in the PE side. The 'bathtub' is full on the left.",
-            middle: "Energy is split evenly. The total is still 10.",
-            bottom: "All energy transferred to KE. The total is still 10."
+            top: "All energy is stored as gravitational potential energy (PE).",
+            middle: "Energy is split evenly between PE and KE. The total is still 10 J.",
+            bottom: "All potential energy has transferred to kinetic energy (KE). The total is still 10 J."
         }
     },
     2: {
@@ -77,26 +77,26 @@ const parts = {
         }
     },
     3: {
-        title: "Part 3: Work (The Faucet & Drain)",
-        desc: "External forces can add or remove energy. Changing the total energy is called doing Work.",
+        title: "Part 3: External Work",
+        desc: "External forces can add or remove energy from the system. Changing the total energy is called doing Work (W = ΔE).",
         totalE: 5,
         posPct: 100,
         enableWork: true,
         showPhysics: false,
         tasks: [
-            "Positive Work: Use the '+ Add' and '- Remove' buttons to perform Work (Energy In).",
-            "Negative Work: Slide left to remove notes (Energy Out).",
-            "Notice: Does the total energy change? This is Work in action."
+            "Positive Work: Use the '+ Add' button to perform Positive Work (Energy In).",
+            "Negative Work: Use the '- Remove' button to perform Negative Work (Energy Out).",
+            "Notice: Does the total energy change? This is external Work in action."
         ],
         hints: {
-            top: "Adding energy here increases the total capacity of the system.",
-            middle: "Work changes the total J, regardless of where the ball is.",
-            bottom: "Total energy changes because an outside force acted on the system."
+            top: "Adding energy here increases the total mechanical energy of the system.",
+            middle: "External work changes total energy (W = ΔE), regardless of ball position.",
+            bottom: "Total energy changes because an external force acted on the system."
         }
     },
     4: {
         title: "Part 4: Putting It All Together",
-        desc: "A scenario with both transfer AND work. Start with 6 PE and perform both changes.",
+        desc: "A scenario combining internal energy transfer (PE ↔ KE) with external work (W = ΔE).",
         totalE: 6,
         posPct: 100,
         enableWork: true,
@@ -107,9 +107,9 @@ const parts = {
             "Predict: Calculate the new velocity after both changes."
         ],
         hints: {
-            top: "Initial state: 6J total.",
+            top: "Initial state: 6J total mechanical energy.",
             middle: "You are both sliding the ball and adding/removing energy.",
-            bottom: "Final state check: Total should be 11J if you added 5."
+            bottom: "Final state check: Total should be 11J if you added 5J of external work."
         }
     }
 };
@@ -291,14 +291,14 @@ function drawRamp() {
     if (state.part >= 2 || state.part === 4) {
         const pe = Math.round(state.totalE * (state.posPct / 100));
         if (pe > 0) {
-            ctx.strokeStyle = '#59118e'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#0f7e9b'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, yBot); ctx.stroke();
             ctx.setLineDash([]);
         }
         
         const ke = state.totalE - pe;
         if (ke > 0 && state.posPct < 98) {
-            ctx.strokeStyle = '#d4a017'; ctx.lineWidth = 3;
+            ctx.strokeStyle = '#d67b19'; ctx.lineWidth = 3;
             const angle = Math.atan2(yBot - by, xBot - bx);
             const arrowLen = Math.min(40, ke * 5);
             const ax = bx + Math.cos(angle) * (r + arrowLen);
@@ -307,7 +307,7 @@ function drawRamp() {
             ctx.moveTo(bx + Math.cos(angle)*r, by + Math.sin(angle)*r);
             ctx.lineTo(ax, ay); ctx.stroke();
             
-            ctx.fillStyle = '#d4a017';
+            ctx.fillStyle = '#d67b19';
             ctx.beginPath();
             ctx.moveTo(ax, ay);
             ctx.lineTo(ax - Math.cos(angle-0.5)*10, ay - Math.sin(angle-0.5)*10);
@@ -317,9 +317,9 @@ function drawRamp() {
     }
 
     // Ball
-    ctx.fillStyle = '#ffc61e';
+    ctx.fillStyle = '#d67b19';
     ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#854F0B'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#924e03'; ctx.lineWidth = 2; ctx.stroke();
 }
 
 window.onload = init;
